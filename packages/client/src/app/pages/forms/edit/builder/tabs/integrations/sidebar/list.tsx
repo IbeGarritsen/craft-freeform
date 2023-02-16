@@ -11,14 +11,16 @@ import { Wrapper } from './list.styles';
 const categoryLabels: Record<string, string> = {
   crm: 'CRM',
   mailing_list: 'Email Marketing',
-  payment: 'Payment',
+  payment_gateway: 'Payment Gateway',
 };
 
 export const List: React.FC = () => {
   const { formId, id } = useParams();
   const navigate = useNavigate();
 
-  const { data, isFetching } = useQueryFormIntegrations(Number(formId ?? 0));
+  const { data, isFetching, isError, error } = useQueryFormIntegrations(
+    Number(formId ?? 0)
+  );
 
   useEffect(() => {
     if (!id && data) {
@@ -28,6 +30,10 @@ export const List: React.FC = () => {
       }
     }
   }, [id, data]);
+
+  if (isError) {
+    return <div>ERROR {error.message}</div>;
+  }
 
   if (!data && isFetching) {
     return (

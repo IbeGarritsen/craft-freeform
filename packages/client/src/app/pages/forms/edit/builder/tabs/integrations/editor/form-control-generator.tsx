@@ -1,19 +1,18 @@
 import type { ComponentType } from 'react';
 import React, { Suspense } from 'react';
 import { useSelector } from 'react-redux';
-import type { ValueUpdateHandler } from '@editor/builder/tabs/form-settings/use-value-update-generator';
-import { selectFormSetting } from '@editor/store/slices/form';
+import { ErrorBoundary } from '@components/form-controls/boundaries/ErrorBoundary';
+import * as FormControlTypes from '@components/form-controls/controls';
+import type { FormControlType } from '@components/form-controls/types';
+import type { ValueUpdateHandler } from '@editor/builder/tabs/integrations/editor/use-value-update-generator';
+import { selectIntegrationSetting } from '@editor/store/slices/integrations';
 import type { Property, PropertyType } from '@ff-client/types/properties';
 import camelCase from 'lodash.camelcase';
 
-import { ErrorBoundary } from './boundaries/ErrorBoundary';
-import * as FormControlTypes from './controls';
-import type { FormControlType } from './types';
-
 type Props = {
-  onValueUpdate: ValueUpdateHandler;
-  namespace: string;
+  id: number;
   property: Property;
+  onValueUpdate: ValueUpdateHandler;
 };
 
 const types: {
@@ -21,11 +20,11 @@ const types: {
 } = FormControlTypes;
 
 export const FormControlGenerator: React.FC<Props> = ({
-  onValueUpdate,
-  namespace,
+  id,
   property,
+  onValueUpdate,
 }) => {
-  const value = useSelector(selectFormSetting(namespace, property.handle));
+  const value = useSelector(selectIntegrationSetting(id, property.handle));
 
   const typeName = camelCase(property.type) as PropertyType;
   const FormControl = types[typeName];

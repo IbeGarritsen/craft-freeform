@@ -62,8 +62,12 @@ const contextSlice = createSlice({
   },
 });
 
-export const { setPage, setFocusedItem, setState, unfocus } =
-  contextSlice.actions;
+export const {
+  setPage,
+  setFocusedItem,
+  setState,
+  unfocus,
+} = contextSlice.actions;
 
 export const selectCurrentPage = (state: RootState): Page | undefined => {
   const pageUid = state.context.page;

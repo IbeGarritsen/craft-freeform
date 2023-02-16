@@ -1,13 +1,19 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Space } from '@ff-client/app/components/layout/blocks/space';
+import Bool from '@components/form-controls/controls/bool';
+import Select from '@components/form-controls/controls/select';
+import {
+  selectIntegration,
+  updateEnabled,
+  updateType,
+} from '@editor/store/slices/integrations';
+import { PropertyType } from '@ff-client/types/properties';
 
-import { selectIntegration } from '../../../../store/slices/integrations';
-
-import { Setting } from './setting/setting';
-import { EditorWrapper, SettingsWrapper } from './editor.styles';
+import { DebugContainer, EditorWrapper } from './editor.styles';
 import { EmptyEditor } from './empty-editor';
+import { FormControlGenerator } from './form-control-generator';
+import { useValueUpdateGenerator } from './use-value-update-generator';
 
 type UrlParams = {
   id: string;
@@ -15,36 +21,85 @@ type UrlParams = {
 };
 
 export const Editor: React.FC = () => {
-  const { id: integrationId } = useParams<UrlParams>();
-  //const dispatch = useDispatch();
+  const { id } = useParams<UrlParams>();
+  const integrationId = Number(id);
 
-  const integration = useSelector(selectIntegration(Number(integrationId)));
+  const dispatch = useDispatch();
+
+  const generateUpdateHandler = useValueUpdateGenerator(integrationId);
+
+  const integration = useSelector(selectIntegration(integrationId));
   if (!integration) {
     return <EmptyEditor />;
   }
 
-  const { id, handle, name, description, settings } = integration;
+  const { name, type, settings, enabled } = integration;
 
   // TODO: refactor Integrations to use #[Property] instead
 
   return (
     <EditorWrapper>
-      <h1 title={handle}>{name}</h1>
-      {!!description && <p>{description}</p>}
+      <DebugContainer>
+        <pre>{JSON.stringify(integration, undefined, 4)}</pre>
+      </DebugContainer>
 
-      {/* <Bool
-        label="Enabled"
-        onChange={() => dispatch(toggleIntegration(id))}
+      <h1>{name}</h1>
+
+      {/* TODO - Remove hacky coding of passing expected structure once API returns correct structure */}
+
+      <Bool
         value={enabled}
-      /> */}
+        property={{
+          type: PropertyType.Boolean,
+          handle: 'enabled',
+          label: 'Enabled',
+          instructions: '',
+          order: 0,
+          flags: [],
+          middleware: [],
+          options: [],
+        }}
+        onUpdateValue={() => dispatch(updateEnabled(integrationId))}
+      />
 
-      <Space />
+      <Select
+        value={type}
+        property={{
+          type: PropertyType.Select,
+          handle: 'type',
+          label: 'Type',
+          instructions: '',
+          order: 1,
+          flags: [],
+          middleware: [],
+          options: [
+            {
+              value: 'crm',
+              label: 'CRM',
+            },
+            {
+              value: 'mailing_list',
+              label: 'Email Marketing',
+            },
+            {
+              value: 'payment_gateway',
+              label: 'Payment Gateway',
+            },
+          ],
+        }}
+        onUpdateValue={(value) =>
+          dispatch(updateType({ id: integrationId, type: value }))
+        }
+      />
 
-      <SettingsWrapper>
-        {settings.map((setting) => (
-          <Setting key={setting.handle} id={id} setting={setting} />
-        ))}
-      </SettingsWrapper>
+      {settings.map((property, key) => (
+        <FormControlGenerator
+          key={property.handle}
+          id={integrationId}
+          property={property}
+          onValueUpdate={generateUpdateHandler(property)}
+        />
+      ))}
     </EditorWrapper>
   );
 };

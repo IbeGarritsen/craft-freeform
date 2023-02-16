@@ -108,11 +108,9 @@ export const cellsSlice = createSlice({
 
 export const { set, moveTo, add, remove } = cellsSlice.actions;
 
-export const selectCellsInRow =
-  (row: Row) =>
-  (state: RootState): Cell[] =>
-    state.cells
-      .filter((cell) => cell.rowUid === row.uid)
-      .sort((a, b) => a.order - b.order);
+export const selectCellsInRow = (row: Row) => (state: RootState): Cell[] =>
+  state.cells
+    .filter((cell) => cell.rowUid === row.uid)
+    .sort((a, b) => a.order - b.order);
 
 export default cellsSlice.reducer;

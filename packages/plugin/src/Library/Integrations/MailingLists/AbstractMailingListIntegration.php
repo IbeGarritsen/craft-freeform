@@ -31,12 +31,16 @@ abstract class AbstractMailingListIntegration extends AbstractIntegration implem
     private $mailingListHandler;
 
     /**
-     * AbstractMailingList constructor.
-     *
-     * @param int        $id
-     * @param string     $name
-     * @param string     $accessToken
-     * @param null|array $settings
+     * @param $id
+     * @param $name
+     * @param \DateTime $lastUpdate
+     * @param $accessToken
+     * @param $settings
+     * @param $enabled
+     * @param LoggerInterface $logger
+     * @param ConfigurationInterface $configuration
+     * @param TranslatorInterface $translator
+     * @param MailingListHandlerInterface $mailingListHandler
      */
     final public function __construct(
         $id,
@@ -44,6 +48,7 @@ abstract class AbstractMailingListIntegration extends AbstractIntegration implem
         \DateTime $lastUpdate,
         $accessToken,
         $settings,
+        $enabled,
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
         TranslatorInterface $translator,
@@ -55,6 +60,7 @@ abstract class AbstractMailingListIntegration extends AbstractIntegration implem
             $lastUpdate,
             $accessToken,
             $settings,
+            $enabled,
             $logger,
             $configuration,
             $translator,

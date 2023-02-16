@@ -37,6 +37,7 @@ use Solspace\Freeform\Records\IntegrationRecord;
  * @property string $settings
  * @property string $forceUpdate
  * @property string $lastUpdate
+ * @property bool   $enabled
  */
 class IntegrationModel extends Model implements IntegrationStorageInterface
 {
@@ -67,6 +68,8 @@ class IntegrationModel extends Model implements IntegrationStorageInterface
     /** @var \DateTime */
     public $lastUpdate;
 
+    public bool $enabled = false;
+
     /**
      * @param string $type
      */
@@ -74,6 +77,7 @@ class IntegrationModel extends Model implements IntegrationStorageInterface
     {
         $model = new self();
         $model->type = $type;
+        $model->enabled = false;
         $model->forceUpdate = true;
         $model->lastUpdate = new \DateTime();
 
@@ -182,6 +186,7 @@ class IntegrationModel extends Model implements IntegrationStorageInterface
             $this->lastUpdate,
             $this->accessToken,
             $this->settings,
+            $this->enabled,
             FreeformLogger::getInstance($logCategory),
             new CraftPluginConfiguration(),
             new CraftTranslator(),

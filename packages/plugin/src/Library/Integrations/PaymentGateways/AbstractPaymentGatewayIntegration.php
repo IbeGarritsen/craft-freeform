@@ -33,12 +33,16 @@ abstract class AbstractPaymentGatewayIntegration extends AbstractIntegration imp
     private $paymentGatewayHandler;
 
     /**
-     * AbstractPaymentGatewayIntegration constructor.
-     *
-     * @param int        $id
-     * @param string     $name
-     * @param string     $accessToken
-     * @param null|array $settings
+     * @param $id
+     * @param $name
+     * @param \DateTime $lastUpdate
+     * @param $accessToken
+     * @param $settings
+     * @param $enabled
+     * @param LoggerInterface $logger
+     * @param ConfigurationInterface $configuration
+     * @param TranslatorInterface $translator
+     * @param PaymentGatewayHandlerInterface $paymentGatewayHandler
      */
     final public function __construct(
         $id,
@@ -46,6 +50,7 @@ abstract class AbstractPaymentGatewayIntegration extends AbstractIntegration imp
         \DateTime $lastUpdate,
         $accessToken,
         $settings,
+        $enabled,
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
         TranslatorInterface $translator,
@@ -57,6 +62,7 @@ abstract class AbstractPaymentGatewayIntegration extends AbstractIntegration imp
             $lastUpdate,
             $accessToken,
             $settings,
+            $enabled,
             $logger,
             $configuration,
             $translator,

@@ -27,15 +27,14 @@ export const layoutsSlice = createSlice({
 
 export const { set, add, remove } = layoutsSlice.actions;
 
-export const selectLayout =
-  (uid: string) =>
-  (state: RootState): Layout | undefined =>
-    state.layouts.find((layout) => layout.uid === uid);
+export const selectLayout = (uid: string) => (
+  state: RootState
+): Layout | undefined => state.layouts.find((layout) => layout.uid === uid);
 
-export const selectPageLayout =
-  (page: Page) =>
-  (state: RootState): Layout | undefined =>
-    state.layouts.find((layout) => layout.uid === page?.layoutUid);
+export const selectPageLayout = (page: Page) => (
+  state: RootState
+): Layout | undefined =>
+  state.layouts.find((layout) => layout.uid === page?.layoutUid);
 
 export default layoutsSlice.reducer;
 

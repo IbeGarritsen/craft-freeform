@@ -64,39 +64,40 @@ const publishUpdated = (
   dispatch(setState(State.Idle));
 };
 
-export const statePersistMiddleware: Middleware =
-  (store) => (next) => (action) => {
-    if (!action) {
-      return;
-    }
+export const statePersistMiddleware: Middleware = (store) => (next) => (
+  action
+) => {
+  if (!action) {
+    return;
+  }
 
-    next(action);
-    if (action.type !== String(save)) {
-      return;
-    }
+  next(action);
+  if (action.type !== String(save)) {
+    return;
+  }
 
-    const dispatch = store.dispatch as AppDispatch;
+  const dispatch = store.dispatch as AppDispatch;
 
-    dispatch(setState(State.Processing));
+  dispatch(setState(State.Processing));
 
-    const data: SaveData = {
-      dispatch,
-      state: store.getState(),
-      persist: {},
-    };
-
-    PubSub.publishSync(TOPIC_SAVE, data);
-
-    const formId = data.state.form.id;
-    if (formId) {
-      axios
-        .put(`/client/api/forms/${formId}`, data.persist)
-        .then((response) => publishUpdated(dispatch, response))
-        .catch((error: APIError) => publishErrors(dispatch, error));
-    } else {
-      axios
-        .post('/client/api/forms', data.persist)
-        .then((response) => publishCreated(dispatch, response))
-        .catch((error: APIError) => publishErrors(dispatch, error));
-    }
+  const data: SaveData = {
+    dispatch,
+    state: store.getState(),
+    persist: {},
   };
+
+  PubSub.publishSync(TOPIC_SAVE, data);
+
+  const formId = data.state.form.id;
+  if (formId) {
+    axios
+      .put(`/client/api/forms/${formId}`, data.persist)
+      .then((response) => publishUpdated(dispatch, response))
+      .catch((error: APIError) => publishErrors(dispatch, error));
+  } else {
+    axios
+      .post('/client/api/forms', data.persist)
+      .then((response) => publishCreated(dispatch, response))
+      .catch((error: APIError) => publishErrors(dispatch, error));
+  }
+};

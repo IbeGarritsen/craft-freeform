@@ -36,6 +36,9 @@ class FormIntegrationsProvider
                 $integration->settings,
                 $settings
             );
+
+            // TODO - nasty hack to pass enabled value to UI editor
+            $integration->enabled = $formIntegration['enabled'];
         }
 
         return $integrations;

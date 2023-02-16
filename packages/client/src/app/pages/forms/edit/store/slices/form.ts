@@ -84,15 +84,13 @@ export const {
 } = formSlice.actions;
 
 export const selectForm = (state: RootState): Form | undefined => state.form;
-export const selectFormSettings =
-  (namespace: string) =>
-  (state: RootState): SettingsNamespace =>
-    state.form.settings?.[namespace] || {};
+export const selectFormSettings = (namespace: string) => (
+  state: RootState
+): SettingsNamespace => state.form.settings?.[namespace] || {};
 
-export const selectFormSetting =
-  (namespace: string, key: string) =>
-  (state: RootState): any =>
-    state.form.settings?.[namespace]?.[key];
+export const selectFormSetting = (namespace: string, key: string) => (
+  state: RootState
+): any => state.form.settings?.[namespace]?.[key];
 
 export default formSlice.reducer;
 

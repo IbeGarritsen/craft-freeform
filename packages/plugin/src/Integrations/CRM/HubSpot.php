@@ -14,6 +14,7 @@ namespace Solspace\Freeform\Integrations\CRM;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Solspace\Freeform\Attributes\Property\Property;
 use Solspace\Freeform\Fields\CheckboxGroupField;
 use Solspace\Freeform\Library\Exceptions\Integrations\IntegrationException;
 use Solspace\Freeform\Library\Integrations\CRM\AbstractCRMIntegration;
@@ -23,15 +24,73 @@ use Solspace\Freeform\Library\Integrations\SettingBlueprint;
 
 class HubSpot extends AbstractCRMIntegration
 {
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_API_KEY = 'api_key';
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_IP_FIELD = 'ip_field';
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_APPEND_COMPANY_DATA = 'append_company_data';
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_APPEND_CONTACT_DATA = 'append_contact_data';
 
     public const TITLE = 'HubSpot';
     public const LOG_CATEGORY = 'HubSpot';
 
+    #[Property(
+        label: 'API Key',
+        instructions: 'Enter your HubSpot API key here.',
+        order: 1,
+    )]
+    protected string $apiKey = '';
+
+    #[Property(
+        label: 'IP Address Field',
+        instructions: 'Enter a custom HubSpot Contact field handle where you wish to store the client\'s IP address from the submission (optional).',
+        order: 2,
+    )]
+    protected string $ipAddressField = '';
+
+    #[Property(
+        label: 'Append checkbox group field values on Contact update?',
+        instructions: 'If a Contact already exists in HubSpot, enabling this will append additional checkbox group field values to the Contact inside HubSpot, instead of overwriting the options.',
+        order: 3,
+    )]
+    protected bool $appendCompanyData = false;
+
+    #[Property(
+        label: 'Append checkbox group field values on Company update?',
+        instructions: 'If a Company already exists in HubSpot, enabling this will append additional checkbox group field values to the Company inside HubSpot, instead of overwriting the options.',
+        order: 4,
+    )]
+    protected bool $appendContactData = false;
+
+    public function getApiKey(): string
+    {
+        return $this->apiKey;
+    }
+
+    public function getIpAddressField(): string
+    {
+        return $this->ipAddressField;
+    }
+
+    public function isAppendCompanyData(): bool
+    {
+        return $this->appendCompanyData;
+    }
+
+    public function isAppendContactData(): bool
+    {
+        return $this->appendContactData;
+    }
+
+    public static function getIconPath(): ?string
+    {
+        return __DIR__.'/assets/hubspot.svg';
+    }
+
     /**
+     * TODO - Remove once integrations have all been refactored
      * Returns a list of additional settings for this integration
      * Could be used for anything, like - AccessTokens.
      *
@@ -77,8 +136,12 @@ class HubSpot extends AbstractCRMIntegration
      */
     public function pushObject(array $keyValueList, $formFields = null): bool
     {
+        // TODO - Remove once integrations have all been refactored
         $isAppendContactData = $this->getSetting(self::SETTING_APPEND_CONTACT_DATA);
         $isAppendCompanyData = $this->getSetting(self::SETTING_APPEND_COMPANY_DATA);
+
+        //$isAppendContactData = $this->isContactDataAppended();
+        //$isAppendCompanyData = $this->isCompanyDataAppended();
 
         $client = new Client();
         $endpoint = $this->getEndpoint('/deals/v1/deal/');
@@ -211,12 +274,21 @@ class HubSpot extends AbstractCRMIntegration
         $contactId = null;
 
         if ($contactProps) {
+            // TODO - Remove once integrations have all been refactored
             if ($this->getSetting(self::SETTING_IP_FIELD) && isset($_SERVER['REMOTE_ADDR'])) {
                 $contactProps[] = [
                     'value' => $_SERVER['REMOTE_ADDR'],
                     'property' => $this->getSetting(self::SETTING_IP_FIELD),
                 ];
             }
+            /*
+            if ($this->getIpAddressField() && isset($_SERVER['REMOTE_ADDR'])) {
+                $contactProps[] = [
+                    'value' => $_SERVER['REMOTE_ADDR'],
+                    'property' => $this->getIpAddressField(),
+                ];
+            }
+            */
 
             try {
                 // If we have an email value posted through the form

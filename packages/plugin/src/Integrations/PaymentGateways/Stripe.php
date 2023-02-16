@@ -3,6 +3,7 @@
 namespace Solspace\Freeform\Integrations\PaymentGateways;
 
 use craft\helpers\UrlHelper;
+use Solspace\Freeform\Attributes\Property\Property;
 use Solspace\Freeform\Events\Payments\UpdateDataEvent;
 use Solspace\Freeform\Freeform;
 use Solspace\Freeform\Library\Composer\Components\Properties\PaymentProperties;
@@ -34,13 +35,28 @@ use yii\base\Event;
 
 class Stripe extends AbstractPaymentGatewayIntegration
 {
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_PUBLIC_KEY_LIVE = 'public_key_live';
+
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_SECRET_KEY_LIVE = 'secret_key_live';
+
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_PUBLIC_KEY_TEST = 'public_key_test';
+
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_SECRET_KEY_TEST = 'secret_key_test';
+
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_LIVE_MODE = 'live_mode';
+
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_WEBHOOK_KEY = 'webhook_key';
+
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_SUPPRESS_ON_FAIL = 'suppress_on_fail';
+
+    // TODO - Remove once integrations have all been refactored
     public const SETTING_SEND_ON_SUCCESS = 'send_on_success';
 
     public const TITLE = 'Stripe';
@@ -82,6 +98,89 @@ class Stripe extends AbstractPaymentGatewayIntegration
     protected $lastError;
     protected $lastErrorDetails;
 
+    #[Property(
+        label: 'Suppress Email Notifications & Integrations when Payments Fail',
+        instructions: 'Failed payments will still be stored as submissions, but enabling this will suppress email notifications and API integrations from being sent.',
+        order: 1,
+    )]
+    protected bool $suppressOnFail = false;
+
+    #[Property(
+        label: 'Send Success Email from Stripe to Submitter',
+        instructions: "When enabled, Freeform will pass off the submitter's email address to Stripe's 'receipt_email' field, which will then automatically trigger Stripe sending a success email notification.",
+        order: 2
+    )]
+    protected bool $sendOnSuccess = false;
+
+    #[Property(
+        label: 'Public Key (Live)',
+        instructions: 'Enter your Stripe LIVE public key here.',
+        order: 3,
+    )]
+    protected string $publicKeyLive = '';
+
+    #[Property(
+        label: 'Secret Key (Live)',
+        instructions: 'Enter your Stripe LIVE secret key here.',
+        order: 4,
+    )]
+    protected string $secretKeyLive = '';
+
+    #[Property(
+        label: 'Public Key (Test)',
+        instructions: 'Enter your Stripe TEST public key here.',
+        order: 5,
+    )]
+    protected string $publicKeyTest = '';
+
+    #[Property(
+        label: 'Secret Key (Test)',
+        instructions: 'Enter your Stripe TEST secret key here.',
+        order: 6,
+    )]
+    protected string $secretKeyTest = '';
+
+    #[Property(
+        label: 'LIVE mode',
+        instructions: 'Enable this to start using LIVE public and secret keys.',
+        order: 7,
+    )]
+    protected bool $liveMode = false;
+
+    #[Property(
+        label: 'Webhook Secret',
+        instructions: 'Enter your Stripe webhook secret here.',
+        order: 8,
+    )]
+    protected string $webhookKey = '';
+
+    #[Property(
+        label: 'Webhook Url',
+        instructions: 'Use this URL to set up webhooks inside your payment gateway dashboard.',
+        order: 9,
+    )]
+    protected string $webhookUrl = '';
+
+    public function isSuppressOnFail(): bool
+    {
+        return $this->suppressOnFail;
+    }
+
+    public function getWebhookKey(): string
+    {
+        return $this->webhookKey;
+    }
+
+    public function getWebhookUrl(): string
+    {
+        return $this->webhookUrl;
+    }
+
+    public static function getIconPath(): ?string
+    {
+        return __DIR__.'/assets/stripe.svg';
+    }
+
     public static function toStripeAmount($amount, $currency)
     {
         if (\in_array(strtoupper($currency), self::ZERO_DECIMAL_CURRENCIES)) {
@@ -108,6 +207,7 @@ class Stripe extends AbstractPaymentGatewayIntegration
     }
 
     /**
+     * TODO - Remove once integrations have all been refactored
      * Returns a list of additional settings for this integration
      * Could be used for anything, like - AccessTokens.
      *
@@ -211,6 +311,7 @@ class Stripe extends AbstractPaymentGatewayIntegration
      */
     public function fetchAccessToken(): string
     {
+        // TODO - replace with $this->secretKeyLive or $this->secretKeyTest
         return $this->getSetting(
             $this->isLiveMode() ? self::SETTING_SECRET_KEY_LIVE : self::SETTING_SECRET_KEY_TEST
         );
@@ -671,6 +772,7 @@ class Stripe extends AbstractPaymentGatewayIntegration
      */
     public function onBeforeSave(IntegrationStorageInterface $model)
     {
+        // TODO - replace with $this->secretKeyLive or $this->secretKeyTest
         $model->updateAccessToken(
             $this->getSetting(
                 $this->isLiveMode() ? self::SETTING_SECRET_KEY_LIVE : self::SETTING_SECRET_KEY_TEST
@@ -723,6 +825,7 @@ class Stripe extends AbstractPaymentGatewayIntegration
      */
     public function getPublicKey(): string
     {
+        // TODO - replace with $this->publicKeyLive or $this->publicKeyTest
         return $this->getSetting(
             $this->isLiveMode() ? self::SETTING_PUBLIC_KEY_LIVE : self::SETTING_PUBLIC_KEY_TEST
         );
@@ -744,6 +847,7 @@ class Stripe extends AbstractPaymentGatewayIntegration
 
     public function sendOnSuccess(): bool
     {
+        // TODO - replace with $this->sendOnSuccess
         return $this->getSetting(self::SETTING_SEND_ON_SUCCESS) ?? true;
     }
 
@@ -752,6 +856,7 @@ class Stripe extends AbstractPaymentGatewayIntegration
      */
     protected function isLiveMode(): bool
     {
+        // TODO - replace with $this->liveMode
         return $this->getSetting(self::SETTING_LIVE_MODE);
     }
 

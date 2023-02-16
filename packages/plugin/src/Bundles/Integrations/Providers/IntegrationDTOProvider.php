@@ -80,8 +80,58 @@ class IntegrationDTOProvider
         $dto->type = $model->type;
         $dto->icon = $icon;
         $dto->settings = [];
+        $dto->enabled = $model->enabled;
 
-        /** @var SettingBlueprint[] $blueprints */
+        /*// TODO - Is this the best place to do this?
+        if ($class === 'Solspace\Freeform\Integrations\CRM\HubSpot') {
+            $settingsReflection = new \ReflectionClass($class);
+
+            foreach ($settingsReflection->getProperties() as $property) {
+                $propertyType = $property->getType();
+
+                // What is this? Causing properties to be skipped
+                //if ($propertyType->isBuiltin()) {
+                //    continue;
+                //}
+
+                try {
+
+                    \Craft::dd($propertyType->getName());
+
+                    $propertyReflection = new \ReflectionClass($propertyType->getName());
+
+                    \Craft::dd([
+                        $settingsReflection,
+                        $settingsReflection->getProperties(),
+                        $propertyReflection
+                    ]);
+                } catch (\ReflectionException $e) {
+                    \Craft::dd($e);
+
+                    continue;
+                }
+
+
+
+                //if (!$propertyReflection->implementsInterface(IntegrationInterface::class)) {
+                //    continue;
+                //}
+
+                //$namespaceAttribute = $propertyReflection->getAttributes(SettingNamespace::class)[0];
+
+                //$namespace = $namespaceAttribute->newInstance();
+                //$namespace->handle = $property->getName();
+                //$namespace->properties = $this->propertyProvider->getEditableProperties($propertyReflection->getName());
+
+                //$namespaces[] = $namespace;
+                //$dto->settings = $this->propertyProvider->getEditableProperties($propertyReflection->getName());
+            }
+        }
+        */
+
+        // TODO - instead of using blueprints to grab settings and return in json response, grab using #[Property]
+
+        // @var SettingBlueprint[] $blueprints
         $blueprints = $class::getSettingBlueprints();
         foreach ($blueprints as $blueprint) {
             if (!$blueprint->isInstanceSetting()) {

@@ -62,10 +62,8 @@ export const fieldsSlice = createSlice({
 
 export const { set, add, remove, edit } = fieldsSlice.actions;
 
-export const selectField =
-  (uid: string) =>
-  (state: RootState): Field =>
-    state.fields.find((field) => field.uid === uid);
+export const selectField = (uid: string) => (state: RootState): Field =>
+  state.fields.find((field) => field.uid === uid);
 
 export default fieldsSlice.reducer;
 

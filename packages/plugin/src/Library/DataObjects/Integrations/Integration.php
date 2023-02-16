@@ -15,4 +15,6 @@ class Integration
     public ?string $icon;
 
     public array $settings;
+
+    public bool $enabled;
 }

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { FormControlGenerator } from '@components/form-controls/form-control-generator';
 import { Sidebar } from '@components/layout/sidebar/sidebar';
 import { useQueryFormSettings } from '@ff-client/queries/forms';
 
 import { Group } from './group/group';
+import { FormControlGenerator } from './form-control-generator';
 import {
   FormSettingsContainer,
   FormSettingsWrapper,

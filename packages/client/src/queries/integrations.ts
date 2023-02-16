@@ -1,7 +1,7 @@
 import type { UseQueryResult } from 'react-query';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
-import { addIntegrations } from '@ff-client/app/pages/forms/edit/store/slices/integrations';
+import { update } from '@ff-client/app/pages/forms/edit/store/slices/integrations';
 import type {
   Integration,
   IntegrationCategory,
@@ -37,9 +37,7 @@ export const useQueryFormIntegrations = (
     {
       staleTime: Infinity,
       cacheTime: Infinity,
-      onSuccess: (integrations) => {
-        dispatch(addIntegrations(integrations));
-      },
+      onSuccess: (integrations) => dispatch(update(integrations)),
     }
   );
 };

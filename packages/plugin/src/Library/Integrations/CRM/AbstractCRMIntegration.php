@@ -18,6 +18,8 @@ use Solspace\Freeform\Library\Database\CRMHandlerInterface;
 use Solspace\Freeform\Library\Integrations\AbstractIntegration;
 use Solspace\Freeform\Library\Integrations\DataObjects\FieldObject;
 use Solspace\Freeform\Library\Translations\TranslatorInterface;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 abstract class AbstractCRMIntegration extends AbstractIntegration implements CRMIntegrationInterface, \JsonSerializable
 {
@@ -25,12 +27,16 @@ abstract class AbstractCRMIntegration extends AbstractIntegration implements CRM
     private $crmHandler;
 
     /**
-     * AbstractMailingList constructor.
-     *
-     * @param int        $id
-     * @param string     $name
-     * @param string     $accessToken
-     * @param null|array $settings
+     * @param $id
+     * @param $name
+     * @param \DateTime $lastUpdate
+     * @param $accessToken
+     * @param $settings
+     * @param $enabled
+     * @param LoggerInterface $logger
+     * @param ConfigurationInterface $configuration
+     * @param TranslatorInterface $translator
+     * @param CRMHandlerInterface $crmHandler
      */
     final public function __construct(
         $id,
@@ -38,6 +44,7 @@ abstract class AbstractCRMIntegration extends AbstractIntegration implements CRM
         \DateTime $lastUpdate,
         $accessToken,
         $settings,
+        $enabled,
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
         TranslatorInterface $translator,
@@ -49,6 +56,7 @@ abstract class AbstractCRMIntegration extends AbstractIntegration implements CRM
             $lastUpdate,
             $accessToken,
             $settings,
+            $enabled,
             $logger,
             $configuration,
             $translator,
@@ -56,7 +64,70 @@ abstract class AbstractCRMIntegration extends AbstractIntegration implements CRM
         );
 
         $this->crmHandler = $crmHandler;
+
+        /*
+        // TODO - Is this the best place to call this?
+        $this->updateProperties($settings);
+
+        // TODO - Is this the best place to call this?
+        $access = new PropertyAccessor();
+
+        $reflection = new \ReflectionClass($this);
+        foreach ($settings as $propertyKey => $propertySettings) {
+            try {
+                $property = $reflection->getProperty($propertyKey);
+            } catch (\ReflectionException) {
+                continue;
+            }
+
+            $object = $access->getValue($this, $property->getName());
+            foreach ($propertySettings as $key => $value) {
+                $access->setValue($object, $key, $value);
+            }
+        }
+        */
     }
+
+    /*
+    public function __get(string $name)
+    {
+        if (isset($this->{$name})) {
+            return $this->{$name};
+        }
+    }
+
+    public function toArray(): array
+    {
+        $reflection = new \ReflectionClass($this);
+        $properties = $reflection->getProperties();
+
+        $array = [];
+        foreach ($properties as $property) {
+            $array[$property->getName()] = $property->getValue($this);
+        }
+
+        return $array;
+    }
+
+    public function updateProperties(array $properties = []): void
+    {
+        $reflection = new \ReflectionClass(static::class);
+        foreach ($reflection->getProperties() as $property) {
+            try {
+                $propertyName = $property->getName();
+
+                if (!isset($properties[$propertyName])) {
+                    continue;
+                }
+
+                $value = $properties[$propertyName];
+                $this->{$propertyName} = $value;
+            } catch (NoSuchPropertyException $e) {
+                // Pass along
+            }
+        }
+    }
+    */
 
     /**
      * {@inheritDoc}

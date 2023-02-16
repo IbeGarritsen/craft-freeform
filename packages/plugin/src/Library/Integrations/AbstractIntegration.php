@@ -41,6 +41,8 @@ abstract class AbstractIntegration implements IntegrationInterface
     /** @var array */
     private $settings;
 
+    private bool $enabled;
+
     /** @var ConfigurationInterface */
     private $configuration;
 
@@ -57,10 +59,16 @@ abstract class AbstractIntegration implements IntegrationInterface
     private $handler;
 
     /**
-     * @param int        $id
-     * @param string     $name
-     * @param string     $accessToken
-     * @param null|array $settings
+     * @param $id
+     * @param $name
+     * @param \DateTime $lastUpdate
+     * @param $accessToken
+     * @param $settings
+     * @param $enabled
+     * @param LoggerInterface $logger
+     * @param ConfigurationInterface $configuration
+     * @param TranslatorInterface $translator
+     * @param IntegrationHandlerInterface $handler
      */
     public function __construct(
         $id,
@@ -68,6 +76,7 @@ abstract class AbstractIntegration implements IntegrationInterface
         \DateTime $lastUpdate,
         $accessToken,
         $settings,
+        $enabled,
         LoggerInterface $logger,
         ConfigurationInterface $configuration,
         TranslatorInterface $translator,
@@ -78,6 +87,7 @@ abstract class AbstractIntegration implements IntegrationInterface
         $this->lastUpdate = $lastUpdate;
         $this->accessToken = $accessToken;
         $this->settings = $settings;
+        $this->enabled = $enabled;
         $this->logger = $logger;
         $this->configuration = $configuration;
         $this->translator = $translator;
@@ -90,6 +100,7 @@ abstract class AbstractIntegration implements IntegrationInterface
     }
 
     /**
+     * TODO - Remove once integrations have all been refactored
      * Returns a list of additional settings for this integration
      * Could be used for anything, like - AccessTokens.
      *
